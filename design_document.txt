@@ -1,0 +1,69 @@
+Design notes: facility database and ID hash table
+Asanga Rimal
+
+Hash function
+Every facility ID is trimmed and changed to uppercase before it is checked,
+hashed, stored, or compared. A typed id like f004 becomes F004 first.
+The table does not call a library hash.
+
+Capacity is the named constant INITIAL_CAPACITY in HashTable.h. It is 11.
+That number is the bucket count, not a limit on how many facilities we can store.
+
+For an uppercase key:
+
+    hash = 0
+    for each character c in the key:
+        hash = (hash * 31 + ASCII value of c) mod capacity
+
+The index is that remainder. 31 is a small odd multiplier, so IDs that only
+differ in the last digit do not all fall into one bucket. The remainder is
+what keeps the index inside 0 .. capacity-1.
+
+With this function, F009 and F010 both land in bucket 0, so the sample file
+produces one collision. F001, F013, and F025 all land in bucket 3. Those three
+are in testdata/collision so we can show a longer chain.
+
+Collision strategy
+Separate chaining. Each bucket is the head of a linked list of nodes, and
+each node holds one facility. I used chaining because the project does not
+want a fixed maximum number of facilities. A chain can grow. Open addressing
+would eventually fill the array and force us to reject a good record.
+We do not resize. A full table cannot happen with this design, so there is
+no "table full" warning.
+
+New nodes are inserted at the front of the chain. That only affects the
+list inside the bucket. The screen list follows facilities.txt, from a
+vector that we push onto when a record is accepted. ID search does not walk
+that vector. It hashes the ID and walks that one chain.
+
+What counts as a collision
+One collision means one accepted insert into a bucket that already had at
+least one node. Stepping through the chain does not add more to the count.
+If the ID is already in the table, insert returns false before the count
+changes. So a later f001, after F001 was stored, is a rejected duplicate
+and the collision total stays the same. Rejected lines (bad format, unknown
+building, and so on) never reach insert.
+
+Facility records
+Facility stores the uppercase ID, the facility name, the building, and the
+category. The building saved on the record is the spelling from buildings.txt,
+even if facilities.txt used different capitalization. The facility name and
+the category keep the spelling from the accepted line, including internal
+spaces. A later line with the same ID does not replace the first record,
+even when the names differ.
+
+Load checks, in this order: number of fields, empty fields, ID format
+(F and exactly three digits), unknown building, duplicate ID. Blank lines
+and comment lines are skipped. A comment is a line whose first non-space
+character is #. A # later in the line, as in Room #5, is normal text.
+Trim removes spaces, tabs, and the carriage return, so a Windows file loads.
+
+ID search has three results. An ID that is not F plus three digits is an
+invalid format. A valid ID that misses the table is not found, and the
+message shows the uppercase ID. A hit prints the stored record.
+
+Other modules
+Sebastian is adding the campus graph. Anugrah is adding the department tree.
+This branch does not implement those. main loads buildings.txt, then
+facilities.txt, and leaves marked spots for the other two files so the
+load order can stay buildings, connections, facilities, departments.
