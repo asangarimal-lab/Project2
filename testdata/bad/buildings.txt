@@ -1,0 +1,7 @@
+# Building names for the rejection checks
+
+Library
+Student Union
+library
+Science Building|North
+   Gym   

@@ -1,0 +1,1 @@
+# No walkways in this set. Graph tests can ignore this folder.

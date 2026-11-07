@@ -1,0 +1,13 @@
+# compiled files
+campus
+*.o
+*.out
+a.out
+*.exe
+*.dSYM
+
+# editor and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store

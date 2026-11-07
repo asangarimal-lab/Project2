@@ -1,0 +1,14 @@
+# Facility checks: bad fields, duplicate ID, case, hash sign inside a name
+
+F001|Main Reading Room|Library|Library
+F2|Bad Id|Library|Lab
+F002|Tutoring|Unknown Hall|Tutoring
+F003|No Category|Student Union|
+F004|Only Three|Library
+F001|Dup Name|Student Union|Library
+f005|Lower Id|  library  |Classroom
+F006|Room #5|Student Union|Classroom
+F007|Room  101|Gym|Classroom
+F008|Extra|Library|Lab|Nope
+|Missing Id|Library|Library
+F009|Windows Line|Gym|Recreation

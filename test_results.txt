@@ -1,0 +1,59 @@
+Milestone 1 tests for the facility module
+Run from the project root after make.
+Graph and tree tests are not recorded here. Those modules are not on this branch.
+
+Test 1
+Description: [M1] Sample buildings and facilities, including the comment line in each file.
+Input: ./campus data
+Expected: buildings.txt: 7 accepted, 0 rejected. facilities.txt: 10 accepted, 0 rejected, hash capacity 11, entries 10, collisions 1.
+Actual: buildings.txt: 7 accepted, 0 rejected. facilities.txt: 10 accepted, 0 rejected (hash capacity 11, entries 10, collisions 1).
+Result: Pass
+
+Test 2
+Description: [M1] View all facilities in file order, with the total.
+Input: menu option 1 on ./campus data
+Expected: F001 through F010 in file order, two facilities named Room 101, total 10.
+Actual: All 10 records printed in file order. Total facilities: 10.
+Result: Pass
+
+Test 3
+Description: [M1] ID search for a real ID, a lowercase ID, a padded ID, an invalid ID, a missing ID, and a blank ID.
+Input: option 2, then F004, f004, " F004 ", 004, F999, and a blank line.
+Expected: F004, f004, and " F004 " all find Computer Lab A in Science Building. 004 is an invalid format. F999 is not found and the message shows F999. A blank ID is an error and returns to the menu.
+Actual: Found F004 | Computer Lab A | Science Building | Computer Lab for F004, f004, and " F004 ". Invalid format for 004. Not found: no facility with ID F999. Error: facility ID cannot be blank.
+Result: Pass
+
+Test 4
+Description: [M1] Hash collision in testdata/collision, then a duplicate key that must not change the collision count.
+Input: ./campus testdata/collision, then menu option 1.
+Expected: F001, F013, and F025 accepted. f001 rejected as duplicate F001. Collisions 2, because the second and third new IDs land in a bucket that already has a node. The duplicate does not make it 3. The list still shows the first F001 (Reading Room), not the duplicate name.
+Actual: Warning on facilities.txt line 8: duplicate facility ID F001. Summary: 3 accepted, 1 rejected (hash capacity 11, entries 3, collisions 2). Display shows Reading Room, Study Nook, and Archive Desk. Total 3.
+Result: Pass
+
+Test 5
+Description: [M1] Duplicate building names that differ only by case, a building line with too many fields, and a building name with extra spaces.
+Input: ./campus testdata/bad
+Expected: Library and Student Union accepted. "library" rejected as a duplicate. "Science Building|North" rejected for field count. "   Gym   " accepted as Gym. Summary 3 accepted, 2 rejected.
+Actual: Warning line 5 duplicate building name library. Warning line 6 expected 1 field. buildings.txt: 3 accepted, 2 rejected.
+Result: Pass
+
+Test 6
+Description: [M1] Facility lines with a bad ID, an unknown building, an empty field, too few fields, too many fields, a duplicate ID, a lowercase ID, a # inside a name, extra spaces around a building, internal double spaces, and a Windows line ending.
+Input: ./campus testdata/bad, then menu option 1.
+Expected: Reject F2, Unknown Hall, the empty category, the 3-field line, the second F001, the 5-field line, and the empty ID. Accept F001, F005 (building spelling Library), F006 Room #5, F007 with two spaces in "Room  101", and F009 from the Windows line. 5 accepted, 7 rejected. Collisions stay 0 because the accepted IDs do not share a bucket.
+Actual: Warnings on lines 4, 5, 6, 7, 8, 12, and 13 with those reasons. facilities.txt: 5 accepted, 7 rejected (hash capacity 11, entries 5, collisions 0). Display: F001 Main Reading Room, F005 Lower Id in Library, F006 Room #5, F007 Room  101, F009 Windows Line. Total 5.
+Result: Pass
+
+Test 7
+Description: [M1] Missing data directory. The program should name the files and keep running.
+Input: ./campus testdata/missing, then menu option 1, then 0.
+Expected: An error for buildings.txt and for facilities.txt, both summaries 0 accepted and 0 rejected, hash entries 0 and collisions 0. Option 1 says no facilities are loaded. The program exits.
+Actual: Error: cannot open file buildings.txt. buildings.txt: 0 accepted, 0 rejected. Error: cannot open file facilities.txt. facilities.txt: 0 accepted, 0 rejected (hash capacity 11, entries 0, collisions 0). Option 1 printed "No facilities are loaded." Exit was clean.
+Result: Pass
+
+Test 8
+Description: [M1] Bad menu input, then a real option, so a bad line does not trap the program.
+Input: on ./campus data, menu lines abc, 99, 3, 6, 0.
+Expected: abc and 99 print an invalid-choice error and return to the menu. 3 and 6 print that those modules are not on this branch. 0 exits.
+Actual: Invalid menu choice for abc and for 99. Option 3 printed that the campus graph module is not available yet. Option 6 printed that the department tree module is not available yet. The program then exited on 0.
+Result: Pass
