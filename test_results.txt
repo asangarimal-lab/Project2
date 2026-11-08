@@ -57,3 +57,49 @@ Input: on ./campus data, menu lines abc, 99, 3, 6, 0.
 Expected: abc and 99 print an invalid-choice error and return to the menu. 3 and 6 print that those modules are not on this branch. 0 exits.
 Actual: Invalid menu choice for abc and for 99. Option 3 printed that the campus graph module is not available yet. Option 6 printed that the department tree module is not available yet. The program then exited on 0.
 Result: Pass
+
+Day 2 checks were run with: python3 testdata/run_day2_checks.py
+The instructor starter did not include a separate automated suite or a DataLoader.cpp.
+Facility loading remains in FacilityDatabase.cpp.
+
+Test 9
+Description: [M1] Day 2 ID search cases on the original facilities.txt.
+Input: ./campus data, option 2, then F004, f004, F999, 004, F00A, and F001.
+Expected: F004 and f004 find Computer Lab A. F999 is not found. 004 and F00A are invalid. F001 finds Main Reading Room. Option 1 lists 10 facilities in file order and prints the total.
+Actual: Both F004 and f004 printed Found: F004 | Computer Lab A | Science Building | Computer Lab. F999 printed Not found: no facility with ID F999. 004 and F00A printed the invalid-format message. F001 printed Found: F001 | Main Reading Room | Library | Library. The list showed F001 through F010 in file order and Total facilities: 10. Load line: 10 accepted, 0 rejected, capacity 11, entries 10, collisions 1.
+Result: Pass
+
+Test 10
+Description: [M1] Duplicate facility ID, including a lowercase copy, must not replace the first record or add a collision.
+Input: ./campus testdata/duplicates, then option 1 and a search for f001.
+Expected: 1 accepted, 1 rejected, collisions 0. The stored name stays Main Reading Room.
+Actual: Warning facilities.txt line 2: duplicate facility ID F001. Summary: 1 accepted, 1 rejected (hash capacity 11, entries 1, collisions 0). Display and search both showed Main Reading Room. "Should Not Replace" was not stored.
+Result: Pass
+
+Test 11
+Description: [M1] Collision case. Both IDs that share a bucket stay searchable, and the duplicate does not increase the collision count.
+Input: ./campus testdata/collision_case, then searches for F001, F013, F025, and f001.
+Expected: 3 accepted, 1 rejected, collisions 2. All three accepted IDs are found. f001 finds the original Reading Room.
+Actual: Warning line 8 duplicate facility ID F001. Summary: 3 accepted, 1 rejected (hash capacity 11, entries 3, collisions 2). F001 found Reading Room, F013 found Study Nook, F025 found Archive Desk, and f001 found Reading Room again.
+Result: Pass
+
+Test 12
+Description: [M1] Unknown building reference, then a later valid facility so loading continues.
+Input: ./campus testdata/unknown_building, option 1.
+Expected: F002 rejected because Not A Building is unknown. F001 and F003 accepted. Ghost Lab is not displayed.
+Actual: Warning facilities.txt line 2: unknown building Not A Building. 2 accepted, 1 rejected. The list showed Main Reading Room and Still Here. Total facilities: 2.
+Result: Pass
+
+Test 13
+Description: [M1] Blank line, comment, field count, empty field, invalid IDs, outer whitespace, and a Windows line ending.
+Input: ./campus testdata/validation, option 1, then searches for F004 and F006.
+Expected: F002, F003, F00A, 004, and the 5-field line are rejected with filename, line number, and a reason. F001, trimmed f004, and the Windows line F006 are accepted. F004's building is the buildings.txt spelling, Library.
+Actual: Warnings on lines 4, 5, 6, 7, and 9. Summary: 3 accepted, 5 rejected. Display showed F001, F004 | Computer Lab A | Library | Computer Lab, and F006 | Windows Line | Library | Lab. Both searches found those records.
+Result: Pass
+
+Test 14
+Description: [M1] Empty facilities.txt and a missing facilities.txt.
+Input: ./campus testdata/empty_facilities and ./campus testdata/missing_facilities, then option 1.
+Expected: The empty file reports 0 accepted and 0 rejected and does not crash. The missing file prints an error naming facilities.txt, reports zeros, and option 1 says no facilities are loaded.
+Actual: Empty file printed facilities.txt: 0 accepted, 0 rejected (hash capacity 11, entries 0, collisions 0) and "No facilities are loaded." Missing file printed Error: cannot open file facilities.txt, the same zero summary, and "No facilities are loaded."
+Result: Pass

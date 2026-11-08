@@ -32,8 +32,15 @@ The data directory is optional. If you leave it off, the program reads data/.
 
     ./campus
     ./campus data
-    ./campus testdata/collision
+    ./campus testdata/collision_case
+    ./campus testdata/duplicates
+    ./campus testdata/empty_facilities
+    ./campus testdata/missing_facilities
     ./campus testdata/bad
+
+Day 2 facility checks, from the project root:
+
+    python3 testdata/run_day2_checks.py
 
 Menu
 1 and 2 are the facility options. 0 exits.

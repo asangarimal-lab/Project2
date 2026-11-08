@@ -1,0 +1,2 @@
+F001|Main Reading Room|Library|Library
+f001|Should Not Replace|Library|Other

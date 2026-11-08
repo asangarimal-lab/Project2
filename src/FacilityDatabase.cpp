@@ -39,6 +39,8 @@ FacilityDatabase::FacilityDatabase() {
 
 // Validates one file. Check order matches the project notes:
 // field count, empty fields, ID format, unknown building, then duplicate.
+// Facility loading stays in this class. A shared DataLoader.cpp is not in
+// the repo yet, so this file was not split out from the other modules.
 void FacilityDatabase::loadFromFile(const string& path, const vector<string>& buildings) {
     string label = "facilities.txt";
     ifstream input(path.c_str());

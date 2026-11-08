@@ -7,7 +7,9 @@ collision counting, facility display, and search by ID.
 Shared: string helpers (trim, uppercase, field split), the menu loop,
 and loading buildings.txt so facility records can be checked against
 accepted building names.
-Test data: testdata/collision and testdata/bad.
+Test data: testdata/collision_case, testdata/duplicates, testdata/validation,
+testdata/empty_facilities, testdata/missing_facilities, and testdata/bad.
+Day 2 checked facility loading, duplicate IDs, collisions, and ID search.
 
 Sebastian
 Modules: Campus graph and BFS. Not on this branch yet.

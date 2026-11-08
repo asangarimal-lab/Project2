@@ -1,0 +1,3 @@
+F001|Main Reading Room|Library|Library
+F002|Ghost Lab|Not A Building|Lab
+F003|Still Here|Library|Study

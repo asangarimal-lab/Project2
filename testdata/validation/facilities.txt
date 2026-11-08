@@ -1,0 +1,10 @@
+# comment line, then a blank line
+
+F001|Main Reading Room|Library|Library
+F002|Only|Three
+F003||Library|Lab
+F00A|Letters|Library|Lab
+004|Short|Library|Lab
+  f004  |Computer Lab A|  Library  |Computer Lab
+F005|Extra|Library|Lab|Nope
+F006|Windows Line|Library|Lab

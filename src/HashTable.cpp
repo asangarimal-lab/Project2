@@ -60,10 +60,12 @@ HashTable::Node* HashTable::findNode(const string& key) const {
     return nullptr;
 }
 
-// Puts the facility in its bucket. The ID on the facility is already uppercase.
+// Puts the facility in its bucket.
+// The stored ID is the trimmed uppercase form, so F001 and f001 share one key.
 // Duplicate check comes first, so a rejected ID never adds a collision.
 // A collision is counted only when the new ID is accepted and the bucket
-// already had a node in it.
+// already had a node in it. The new node is linked in front, so the older
+// facility stays on the chain instead of being overwritten.
 bool HashTable::insert(const Facility& facility) {
     string key = toUpper(trim(facility.getId()));
     if (findNode(key) != nullptr) {
@@ -75,7 +77,8 @@ bool HashTable::insert(const Facility& facility) {
         collisionCount++;
     }
 
-    Node* node = new Node(facility);
+    Facility stored(key, facility.getName(), facility.getBuilding(), facility.getCategory());
+    Node* node = new Node(stored);
     node->next = buckets[index];
     buckets[index] = node;
     entryCount++;

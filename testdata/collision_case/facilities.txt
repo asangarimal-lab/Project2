@@ -1,0 +1,8 @@
+# Capacity 11, hash = (hash * 31 + char) mod 11.
+# F001, F013, and F025 all land in bucket 3.
+# The last line repeats F001 in lowercase and must be rejected
+# without adding another collision.
+F001|Reading Room|Library|Library
+F013|Study Nook|Library|Study Room
+F025|Archive Desk|Library|Library
+f001|Duplicate Should Fail|Library|Library

@@ -21,7 +21,8 @@ what keeps the index inside 0 .. capacity-1.
 
 With this function, F009 and F010 both land in bucket 0, so the sample file
 produces one collision. F001, F013, and F025 all land in bucket 3. Those three
-are in testdata/collision so we can show a longer chain.
+are in testdata/collision_case. The lowercase duplicate in that folder does
+not add a fourth collision.
 
 Collision strategy
 Separate chaining. Each bucket is the head of a linked list of nodes, and
