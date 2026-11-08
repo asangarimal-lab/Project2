@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "CampusGraph.h"
 #include "FacilityDatabase.h"
 #include "StringUtil.h"
 using namespace std;
@@ -128,6 +129,20 @@ void searchFacilityById(const FacilityDatabase& facilities) {
     facilities.searchById(rawId);
 }
 
+// Asks for a start building, then runs BFS from it.
+void findReachableBuildings(const CampusGraph& graph) {
+    cout << "Enter starting building: ";
+    string startName;
+    if (!getline(cin, startName)) {
+        return;
+    }
+    if (trim(startName).empty()) {
+        cout << "Error: building name cannot be blank." << endl;
+        return;
+    }
+    graph.bfsReachable(startName);
+}
+
 int main(int argc, char* argv[]) {
     // Default folder is data/. Example: ./campus testdata/collision
     string dataDir = "data";
@@ -137,13 +152,15 @@ int main(int argc, char* argv[]) {
 
     vector<string> buildings;
     FacilityDatabase facilities;
+    CampusGraph graph;
 
     // Required load order starts with buildings, then connections,
     // then facilities, then departments. Connections and departments
     // are loaded by the other modules when those branches are merged.
     loadBuildings(joinPath(dataDir, "buildings.txt"), buildings);
 
-    // Sebastian: load connections into CampusGraph here.
+    graph.setBuildings(buildings);
+    graph.loadConnections(joinPath(dataDir, "connections.txt"));
 
     facilities.loadFromFile(joinPath(dataDir, "facilities.txt"), buildings);
 
@@ -167,8 +184,12 @@ int main(int argc, char* argv[]) {
             facilities.displayAll();
         } else if (choice == 2) {
             searchFacilityById(facilities);
-        } else if (choice == 3 || choice == 4 || choice == 5) {
-            cout << "Campus graph module is not available yet." << endl;
+        } else if (choice == 3) {
+            graph.displayGraph();
+        } else if (choice == 4) {
+            graph.displayCountsAndDegrees();
+        } else if (choice == 5) {
+            findReachableBuildings(graph);
         } else if (choice == 6 || choice == 7 || choice == 8 || choice == 9) {
             cout << "Department tree module is not available yet." << endl;
         } else if (choice == 0) {
