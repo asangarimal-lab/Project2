@@ -1,6 +1,7 @@
-Milestone 1 tests for the facility module
+Milestone 1 tests for the facility and graph modules
 Run from the project root after make.
-Graph and tree tests are not recorded here. Those modules are not on this branch.
+Tests 1 to 8 cover facilities and the hash table. Tests 9 to 15 cover the campus graph and BFS.
+Department tree tests are not recorded here yet.
 
 Test 1
 Description: [M1] Sample buildings and facilities, including the comment line in each file.
@@ -56,4 +57,53 @@ Description: [M1] Bad menu input, then a real option, so a bad line does not tra
 Input: on ./campus data, menu lines abc, 99, 3, 6, 0.
 Expected: abc and 99 print an invalid-choice error and return to the menu. 3 and 6 print that those modules are not on this branch. 0 exits.
 Actual: Invalid menu choice for abc and for 99. Option 3 printed that the campus graph module is not available yet. Option 6 printed that the department tree module is not available yet. The program then exited on 0.
+Result: Pass
+
+Test 9
+Description: [M1] Sample graph: load summary, graph view, counts and degrees.
+Input: ./campus data, then menu options 3 and 4.
+Expected: connections.txt: 6 accepted, 0 rejected. Neighbors in file order (Library lists Student Union then Business Building). Observatory shows (no connections). Total buildings 7, total connections 6 counted once. Degrees 2, 3, 2, 1, 2, 2, 0 in building order.
+Actual: connections.txt: 6 accepted, 0 rejected. Library: Student Union, Business Building. Observatory: (no connections). Total buildings: 7. Total connections: 6. Degrees Library 2, Student Union 3, Science Building 2, Engineering Building 1, Business Building 2, Gym 2, Observatory 0.
+Result: Pass
+
+Test 10
+Description: [M1] BFS from a connected building (sample data).
+Input: ./campus data, option 5, then Library.
+Expected: Library 0, Student Union 1, Business Building 1, Science Building 2, Gym 2, Engineering Building 3. Reachable: 6 of 7 buildings.
+Actual: Same order and distances as expected. Reachable: 6 of 7 buildings.
+Result: Pass
+
+Test 11
+Description: [M1] BFS from an isolated building, typed in lowercase (sample data).
+Input: ./campus data, option 5, then observatory.
+Expected: Only Observatory at distance 0, using the spelling from buildings.txt. Reachable: 1 of 7 buildings.
+Actual: Reachable buildings from Observatory: Observatory (distance 0). Reachable: 1 of 7 buildings.
+Result: Pass
+
+Test 12
+Description: [M1] BFS with an unknown start, then a blank start, then a real one to show the menu still works.
+Input: ./campus data, option 5 with Nowhere, option 5 with a line of spaces, then option 5 with Gym.
+Expected: Error: unknown building Nowhere. Error: building name cannot be blank. Both return to the menu. Gym then runs a normal BFS.
+Actual: Error: unknown building Nowhere. Error: building name cannot be blank. The menu came back each time and the Gym search worked.
+Result: Pass
+
+Test 13
+Description: [M1] Connection rejections, including a reversed duplicate with different capitalization, a self-connection, unknown buildings on either side, wrong field counts, an empty field, an exact duplicate, padded names, and Windows line endings.
+Input: ./campus testdata/graph_bad, then options 3 and 4.
+Expected: Accept line 2 (Library|Student Union), line 11 (Gym|Student Union with padding), and line 12 (Science Building|Library). Reject line 3 (reversed duplicate), 4 (self), 5 (unknown Nowhere), 6 (unknown Atlantis), 7 (1 field), 8 (3 fields), 9 (empty field), and 13 (exact duplicate). Summary 3 accepted, 8 rejected. Total connections 3, each counted once. Library degree 2.
+Actual: Warnings on lines 3, 4, 5, 6, 7, 8, 9, and 13 with those reasons. connections.txt: 3 accepted, 8 rejected. Total connections: 3. Library: Student Union, Science Building. Student Union: Library, Gym. Degrees 2, 2, 1, 1, 0.
+Result: Pass
+
+Test 14
+Description: [M1] A graph with several connected components, and BFS from different components.
+Input: ./campus testdata/graph_multi, option 5 with East Hall, then "  west hall  ", then Lab.
+Expected: Two linked groups and one isolated building. East Hall reaches East Hall 0, West Hall 1, Annex 2 (3 of 6). West Hall reaches itself 0, then its neighbors East Hall 1 and Annex 1 in neighbor order (3 of 6). Lab reaches only itself (1 of 6). Nothing from another component is ever shown.
+Actual: East Hall: East Hall 0, West Hall 1, Annex 2, Reachable 3 of 6. West Hall: West Hall 0, East Hall 1, Annex 1, Reachable 3 of 6. Lab: Lab 0, Reachable 1 of 6.
+Result: Pass
+
+Test 15
+Description: [M1] Empty or missing graph data: a buildings file with no connections, an empty buildings file, and a missing data directory.
+Input: ./campus testdata/graph_empty, ./campus testdata/graph_nobuildings, and ./campus testdata/missing, each with options 3, 4, and 5.
+Expected: graph_empty: 0 accepted and 0 rejected, both buildings show (no connections), 0 connections, BFS from Alpha reaches 1 of 2. graph_nobuildings: the connection is rejected as an unknown building, and options 3, 4, and 5 say no buildings are loaded with totals 0. missing: an error naming connections.txt and the same empty-graph messages, with no crash.
+Actual: graph_empty matched. graph_nobuildings: Warning: connections.txt line 1: unknown building Library, 0 accepted, 1 rejected, then "No buildings are loaded." for all three options, with totals 0. missing: Error: cannot open file connections.txt and the same empty messages. The program exited cleanly each time.
 Result: Pass
