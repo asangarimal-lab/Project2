@@ -6,7 +6,7 @@ This program loads campus text files and lets a user look up facilities by ID.
 The ID lookup uses a custom hash table with separate chaining. Building names
 are loaded first so a facility can only refer to an accepted building.
 
-This branch (asanga/facility-hash-table) is Asanga's facility module.
+This branch (feature/asanga-facility-hash) is Asanga's facility module.
 The campus graph and the department tree are not in this branch yet.
 Menu options 3 through 9 print a short message and return to the menu.
 
