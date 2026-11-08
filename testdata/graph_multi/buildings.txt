@@ -1,0 +1,6 @@
+North Hall
+South Hall
+East Hall
+West Hall
+Annex
+Lab

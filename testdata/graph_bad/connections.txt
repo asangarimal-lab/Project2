@@ -1,0 +1,13 @@
+# BuildingA|BuildingB
+Library|Student Union
+student union|library
+Library|Library
+Library|Nowhere
+Atlantis|Gym
+Library
+Library|Gym|Extra
+Library|
+
+   Gym   |   Student Union   
+Science Building|Library
+Library|Student Union

@@ -1,0 +1,6 @@
+# Buildings for the connection rejection checks
+Library
+Student Union
+Science Building
+Gym
+Observatory
