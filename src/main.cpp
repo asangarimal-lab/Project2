@@ -13,6 +13,7 @@
 #include <vector>
 #include "FacilityDatabase.h"
 #include "StringUtil.h"
+#include "DepartmentTree.h"
 using namespace std;
 
 // Reads buildings.txt into names, using the spelling of the first good line.
@@ -127,6 +128,53 @@ void searchFacilityById(const FacilityDatabase& facilities) {
     }
     facilities.searchById(rawId);
 }
+void addDepartment(DepartmentTree& departments) {
+    cout << "Enter department name: ";
+
+    string name;
+    if (!getline(cin, name)) {
+        return;
+    }
+
+    if (trim(name).empty()) {
+        cout << "Error: department name cannot be blank." << endl;
+        return;
+    }
+
+    string parentName = "NONE";
+
+    if (!departments.isEmpty()) {
+        cout << "Enter parent department name: ";
+
+        if (!getline(cin, parentName)) {
+            return;
+        }
+    }
+
+    string error;
+
+    if (departments.addDepartment(name, parentName, error)) {
+        cout << "Department added: " << trim(name) << endl;
+    } else {
+        cout << "Error: " << error << "." << endl;
+    }
+}
+
+void searchDepartment(const DepartmentTree& departments) {
+    if (departments.isEmpty()) {
+        cout << "Department tree is empty." << endl;
+        return;
+    }
+
+    cout << "Enter department name: ";
+
+    string name;
+    if (!getline(cin, name)) {
+        return;
+    }
+
+    departments.searchDepartment(name);
+}
 
 int main(int argc, char* argv[]) {
     // Default folder is data/. Example: ./campus testdata/collision
@@ -137,6 +185,7 @@ int main(int argc, char* argv[]) {
 
     vector<string> buildings;
     FacilityDatabase facilities;
+    DepartmentTree departments;
 
     // Required load order starts with buildings, then connections,
     // then facilities, then departments. Connections and departments
@@ -147,9 +196,9 @@ int main(int argc, char* argv[]) {
 
     facilities.loadFromFile(joinPath(dataDir, "facilities.txt"), buildings);
 
-    // Anugrah: load departments into DepartmentTree here.
+departments.loadFromFile(joinPath(dataDir, "departments.txt"));
 
-    bool running = true;
+bool running = true;
     while (running) {
         printMenu();
         string line;
@@ -169,8 +218,14 @@ int main(int argc, char* argv[]) {
             searchFacilityById(facilities);
         } else if (choice == 3 || choice == 4 || choice == 5) {
             cout << "Campus graph module is not available yet." << endl;
-        } else if (choice == 6 || choice == 7 || choice == 8 || choice == 9) {
-            cout << "Department tree module is not available yet." << endl;
+        } else if (choice == 6) {
+            addDepartment(departments);
+        } else if (choice == 7) {
+            searchDepartment(departments);
+        } else if (choice == 8) {
+            departments.displayHierarchy();
+        } else if (choice == 9) {
+            departments.displayPreorder();
         } else if (choice == 0) {
             running = false;
         } else {

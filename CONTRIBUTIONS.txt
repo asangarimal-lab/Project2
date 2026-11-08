@@ -13,6 +13,15 @@ Sebastian
 Modules: Campus graph and BFS. Not on this branch yet.
 Shared:
 
-Anugrah
-Modules: Department tree. Not on this branch yet.
-Shared:
+Anugrah Lama
+Modules: DepartmentTree.
+
+Implemented the general department tree, department file loading and
+validation, adding departments in memory, case-insensitive searching,
+hierarchy display, and preorder traversal.
+
+Integrated department loading and menu options 6-9 into main.cpp.
+Added DepartmentTree.cpp to the Makefile.
+
+Created department test data and recorded testing results in
+test_results.txt.
