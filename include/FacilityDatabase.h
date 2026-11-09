@@ -1,9 +1,9 @@
 // FacilityDatabase.h
-// Purpose: Keeps accepted facilities in file order and looks them up by ID.
+// Purpose: Holds the facilities and looks them up by ID.
 // Author: Asanga Rimal
 //
-// The vector is for display (facilities.txt order).
-// The hash table is the only path used by ID search.
+// I keep a vector so "view all" stays in facilities.txt order.
+// The hash table is only for ID search. Searching does not walk the vector.
 
 #ifndef FACILITYDATABASE_H
 #define FACILITYDATABASE_H
@@ -22,15 +22,14 @@ private:
 public:
     FacilityDatabase();
 
-    // Reads facilities.txt. buildings holds the accepted names from buildings.txt,
-    // in that file's spelling. Warnings and the load summary are printed here.
+    // Reads facilities.txt. buildings is the accepted names, spelled the
+    // way buildings.txt had them. Prints a warning for each bad line.
     void loadFromFile(const string& path, const vector<string>& buildings);
 
-    // Prints every accepted facility and the total. Empty table gets a message.
+    // Prints the accepted facilities and the total. Says so if the list is empty.
     void displayAll() const;
 
-    // Trims and uppercases the ID, then uses the hash table.
-    // Reports invalid format, not found, or the facility that was found.
+    // Trims the typed ID, uppercases it, then asks the hash table.
     void searchById(const string& rawId) const;
 
     int getCount() const;

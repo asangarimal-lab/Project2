@@ -33,11 +33,10 @@ void HashTable::clear() {
     collisionCount = 0;
 }
 
-// Polynomial hash. The key is the uppercase ID.
-// hash starts at 0, then for each character c:
-//     hash = (hash * 31 + ASCII value of c) mod capacity
-// 31 is just a small odd multiplier so IDs that differ by one digit
-// do not all collapse the same way. The mod keeps the index in range.
+// The key here is already uppercase, like F004.
+// Start at 0. For each character: hash = (hash * 31 + that character) mod capacity.
+// I used 31 because it is a small odd number, so F009 and F010 do not
+// all pile into one bucket. The mod is what keeps the index inside the table.
 int HashTable::hashFunction(const string& key) const {
     unsigned long hashValue = 0;
     for (int i = 0; i < (int)key.size(); i++) {
@@ -47,7 +46,7 @@ int HashTable::hashFunction(const string& key) const {
     return (int)hashValue;
 }
 
-// Linear walk of one bucket. Chains are short for this project.
+// Only walks the chain for this bucket. Stops when the ID matches.
 HashTable::Node* HashTable::findNode(const string& key) const {
     int index = hashFunction(key);
     Node* current = buckets[index];
@@ -60,10 +59,12 @@ HashTable::Node* HashTable::findNode(const string& key) const {
     return nullptr;
 }
 
-// Puts the facility in its bucket. The ID on the facility is already uppercase.
-// Duplicate check comes first, so a rejected ID never adds a collision.
-// A collision is counted only when the new ID is accepted and the bucket
-// already had a node in it.
+// f001 and F001 are the same key once I trim and uppercase.
+// I look for a duplicate before I touch the collision count. If it is
+// already there, the first record stays and this insert fails.
+// A collision only counts when the new ID goes into a bucket that
+// already has a node. I link the new node at the front, so nothing
+// already in the chain gets overwritten.
 bool HashTable::insert(const Facility& facility) {
     string key = toUpper(trim(facility.getId()));
     if (findNode(key) != nullptr) {
@@ -82,7 +83,7 @@ bool HashTable::insert(const Facility& facility) {
     return true;
 }
 
-// Same hash and chain walk as insert. Null means not found.
+// Same hash as insert. This does not scan the facility vector.
 const Facility* HashTable::lookup(const string& id) const {
     string key = toUpper(trim(id));
     Node* node = findNode(key);

@@ -4,7 +4,8 @@
 
 #include "StringUtil.h"
 
-// A character we strip from the ends of a field or a typed name.
+// Spaces and tabs, plus \r. Windows files leave \r on the end of the line,
+// and "Library\r" would not match Library if I left it there.
 bool isTrimChar(char c) {
     return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }

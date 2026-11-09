@@ -1,10 +1,10 @@
 // HashTable.h
-// Purpose: Custom hash table keyed by facility ID, with separate chaining.
+// Purpose: My hash table for facility IDs, using separate chaining.
 // Author: Asanga Rimal
 //
-// This is our own table. It does not use the library hash or unordered_map.
-// Capacity is the number of buckets. Chains can grow, so there is no max
-// number of facilities.
+// I wrote the hash myself. This is not unordered_map and it does not call
+// the library hash. 11 is how many buckets we start with. A chain can get
+// longer, so that number is not a cap on facilities.
 
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
@@ -27,8 +27,8 @@ private:
         }
     };
 
-    // Small prime. With the hash below, some sample IDs share a bucket,
-    // which is what we want when we print the collision count.
+    // 11 is small on purpose. F009 and F010 share a bucket, so the
+    // load summary has a real collision to show.
     static const int INITIAL_CAPACITY = 11;
 
     vector<Node*> buckets;
@@ -53,12 +53,11 @@ public:
     HashTable(const HashTable& other) = delete;
     HashTable& operator=(const HashTable& other) = delete;
 
-    // Inserts a facility. Returns false if that ID is already stored.
-    // A false return does not change the collision count.
+    // False means that ID was already there. The old record stays,
+    // and a rejected duplicate does not add to the collision count.
     bool insert(const Facility& facility);
 
-    // Hash lookup. Returns null when the ID is not in the table.
-    // The pointer stays valid until the table is destroyed.
+    // Hashes the ID and walks that one chain. Null means it is not there.
     const Facility* lookup(const string& id) const;
 
     // True when the uppercase ID is already an entry.

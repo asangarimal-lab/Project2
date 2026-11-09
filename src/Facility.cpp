@@ -37,7 +37,7 @@ string Facility::getCategory() const {
     return category;
 }
 
-// Used by the full list and by a successful ID search.
+// Four fields, same order as the file: ID, name, building, category.
 void Facility::display() const {
     cout << id << " | " << name << " | " << building << " | " << category;
 }

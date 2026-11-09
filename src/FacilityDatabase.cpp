@@ -8,7 +8,8 @@
 #include <iostream>
 using namespace std;
 
-// True for F followed by exactly three digits. The ID must already be uppercase.
+// ID has to look like F001. Already uppercased before this check.
+// F00A, 004, and F0001 all fail here.
 static bool isValidId(const string& id) {
     if (id.size() != 4) {
         return false;
@@ -24,7 +25,8 @@ static bool isValidId(const string& id) {
     return true;
 }
 
-// Finds the buildings.txt spelling for this name, or "" if it was never accepted.
+// "library" should match the Library line from buildings.txt.
+// I return that original spelling, or "" if the building was never accepted.
 static string canonicalBuilding(const vector<string>& buildings, const string& name) {
     for (int i = 0; i < (int)buildings.size(); i++) {
         if (equalsIgnoreCase(buildings[i], name)) {
@@ -37,8 +39,9 @@ static string canonicalBuilding(const vector<string>& buildings, const string& n
 FacilityDatabase::FacilityDatabase() {
 }
 
-// Validates one file. Check order matches the project notes:
-// field count, empty fields, ID format, unknown building, then duplicate.
+// One bad line should not stop the rest of the file.
+// I check field count first, then empty fields, then the ID, then the
+// building, then a duplicate ID. Whichever fails first is the warning I print.
 void FacilityDatabase::loadFromFile(const string& path, const vector<string>& buildings) {
     string label = "facilities.txt";
     ifstream input(path.c_str());
@@ -61,7 +64,7 @@ void FacilityDatabase::loadFromFile(const string& path, const vector<string>& bu
         if (trimmed.empty()) {
             continue;
         }
-        // A comment is only a line whose first real character is #.
+        // "Room #5" is not a comment. Only a line that starts with # is.
         if (trimmed[0] == '#') {
             continue;
         }
@@ -99,8 +102,8 @@ void FacilityDatabase::loadFromFile(const string& path, const vector<string>& bu
             continue;
         }
 
-        // Name and category keep the spelling from this line.
-        // The building uses the spelling from buildings.txt.
+        // Keep the name and category as they were written.
+        // The building name comes from buildings.txt, not from this line's caps.
         Facility facility(id, fields[1], buildingName, fields[3]);
         if (!table.insert(facility)) {
             cout << "Warning: " << label << " line " << lineNumber
@@ -119,7 +122,7 @@ void FacilityDatabase::loadFromFile(const string& path, const vector<string>& bu
          << ", collisions " << table.getCollisionCount() << ")" << endl;
 }
 
-// File order, not hash-bucket order.
+// Walk the vector, not the chains. Bucket order is not file order.
 void FacilityDatabase::displayAll() const {
     if (facilities.empty()) {
         cout << "No facilities are loaded." << endl;
@@ -133,8 +136,8 @@ void FacilityDatabase::displayAll() const {
     cout << "Total facilities: " << facilities.size() << endl;
 }
 
-// Three outcomes: bad format, valid but missing, or found.
-// lookup uses the table. This function does not scan the vector.
+// Three answers: the ID is shaped wrong, it is a real ID we do not have,
+// or we found it. lookup() is the hash table, not a loop over facilities.
 void FacilityDatabase::searchById(const string& rawId) const {
     string id = toUpper(trim(rawId));
     if (!isValidId(id)) {
