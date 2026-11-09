@@ -67,3 +67,57 @@ Sebastian is adding the campus graph. Anugrah is adding the department tree.
 This branch does not implement those. main loads buildings.txt, then
 facilities.txt, and leaves marked spots for the other two files so the
 load order can stay buildings, connections, facilities, departments.
+
+----------------------------------------------------------------------
+Design notes: campus graph and BFS
+Sebastian
+
+Graph representation
+The graph is an adjacency list inside the CampusGraph class. There is a vector
+of building names and a vector of vectors of ints. adjList[i] holds the
+indexes of the buildings that touch building i. I chose an adjacency list
+because it grows with the data, so there is no fixed size and no wasted space
+for a campus with few walkways. A matrix would need n by n cells even when
+most are empty. Checking whether two buildings are already connected means
+looking through one short list, which is fine for a campus.
+
+Buildings stay in the order of buildings.txt. Neighbors stay in the order
+the connections were accepted. I never sort them, because sorting could
+change the BFS order.
+
+Loading connections
+main loads buildings.txt first and gives the accepted names to the graph with
+setBuildings. Then loadConnections reads connections.txt with getline. Blank
+lines and lines whose first non-space character is # are skipped. Checks, in
+this order: number of fields (must be 2), empty fields, unknown building on
+either side, a building connected to itself, and a duplicate. Building names
+are matched ignoring case and with outer whitespace trimmed, so the graph
+always shows the spelling from buildings.txt. A reversed duplicate (B|A after
+A|B) is caught because the duplicate check looks for the edge from either end.
+Every rejected line prints the file name, line number, and reason, and then
+loading continues. A missing file prints an error and the graph stays empty.
+
+An accepted connection is added to both buildings, but the connection count
+goes up only once. Total connections is that count, so it is never doubled.
+The degree of a building is the size of its neighbor list.
+
+Display
+View graph prints each building and its neighbors, or (no connections) when
+the list is empty. Counts and degrees prints total buildings, total
+connections, and the degree of every building. If there are no buildings,
+both print a clear message and the totals show 0.
+
+BFS reachability
+The menu asks for a starting building. A blank name is an error in main. An
+unknown name prints an error and returns to the menu. BFS uses a std::queue
+and a vector<bool> visited. I mark a building as visited when I put it in the
+queue, not when I take it out, so no building is queued twice. A second vector
+keeps the distance in connections, which is the distance of the building it
+was reached from plus one. Buildings print in the order they leave the queue,
+each with its distance, and then "Reachable: X of Y buildings". The start is
+at distance 0 and counts as reachable, so an isolated building reaches only
+itself. Buildings in other connected components are never reached.
+
+Same graph for later features
+Display, counts, and BFS all use the same adjList. The Final shortest path and
+the connectivity report can reuse it too.
