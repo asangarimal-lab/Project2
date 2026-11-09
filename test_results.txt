@@ -162,8 +162,10 @@ Input: Run with testdata/department-empty; choose option 6;
 enter University; choose option 7; enter University
 Expected: Root added without a parent prompt; parent None,
 child count 0, depth 0
-Actual: Root search showed None, 0 children, and depth 0
-Result: PASS for search details; confirm no parent prompt
+Actual: Only the name was asked, with no parent prompt. Printed
+Department added: University. The search showed Parent None,
+child count 0, and depth 0
+Result: PASS
 
 Test: Department file validation
 Input: Run ./campus.exe testdata/department-invalid
@@ -181,18 +183,22 @@ Result: PASS
 Test: Duplicate rejection through the menu
 Input: Option 6; computer science; University
 Expected: Duplicate-name error; no additional department
-Actual: Not yet recorded
-Result: NOT CONFIRMED
+Actual: Error: duplicate department name computer science. Option 8
+afterward showed the same 7 departments, so nothing was added
+Result: PASS
 
 Test: Unknown parent through the menu
 Input: Option 6; New Department; Unknown Parent
 Expected: Unknown-parent error; department not added
-Actual: Department absent from hierarchy; error text not recorded
-Result: NOT FULLY CONFIRMED
+Actual: Error: unknown parent Unknown Parent. Option 8 afterward
+showed the same 7 departments, so the department was not added
+Result: PASS
 
 Test: Missing department file
 Input: Run ./campus.exe testdata/department-missing
 Expected: Cannot-open-file error; 0 accepted, 0 rejected;
 menu remains usable and option 8 reports an empty tree
-Actual: Not yet recorded
-Result: NOT CONFIRMED
+Actual: Error: cannot open file departments.txt, then
+departments.txt: 0 accepted, 0 rejected. Options 8 and 7 both printed
+Department tree is empty. and the menu kept working
+Result: PASS
