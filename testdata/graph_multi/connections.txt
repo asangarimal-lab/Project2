@@ -1,0 +1,3 @@
+North Hall|South Hall
+East Hall|West Hall
+West Hall|Annex
