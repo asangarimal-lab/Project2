@@ -6,7 +6,7 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra -Iinclude
 
-SRCS = src/main.cpp src/StringUtil.cpp src/Facility.cpp src/HashTable.cpp src/FacilityDatabase.cpp src/CampusGraph.cpp
+SRCS = src/main.cpp src/StringUtil.cpp src/Facility.cpp src/HashTable.cpp src/FacilityDatabase.cpp src/CampusGraph.cpp src/DepartmentTree.cpp
 
 campus: $(SRCS)
 	$(CXX) $(CXXFLAGS) -o campus $(SRCS)

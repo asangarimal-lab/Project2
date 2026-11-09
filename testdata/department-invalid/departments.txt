@@ -1,0 +1,10 @@
+# Department validation tests
+
+University|NONE
+Engineering|University
+engineering|University
+Computing|Unknown Parent
+Second Root|NONE
+|University
+Missing Parent|
+Too|Many|Fields

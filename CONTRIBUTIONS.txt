@@ -17,6 +17,15 @@ Shared: Linking the graph to main.cpp by loading connections and offering menu o
 
 Test data: testdata/graph_bad testdata/graph_multi testdata/graph_empty and testdata/graph_nobuildings. Tests 9 to 15 are listed in test_results.txt.
 
-Anugrah
-Modules: Department tree. Not on this branch yet.
-Shared:
+Anugrah Lama
+Modules: DepartmentTree.
+
+Implemented the general department tree, department file loading and
+validation, adding departments in memory, case-insensitive searching,
+hierarchy display, and preorder traversal.
+
+Integrated department loading and menu options 6-9 into main.cpp.
+Added DepartmentTree.cpp to the Makefile.
+
+Created department test data and recorded testing results in
+test_results.txt.

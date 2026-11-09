@@ -1,7 +1,7 @@
 Milestone 1 tests for the facility and graph modules
 Run from the project root after make.
 Tests 1 to 8 cover facilities and the hash table. Tests 9 to 15 cover the campus graph and BFS.
-Department tree tests are not recorded here yet.
+Anugrah's department tree tests are in the last section of this file.
 
 Test 1
 Description: [M1] Sample buildings and facilities, including the comment line in each file.
@@ -107,3 +107,92 @@ Input: ./campus testdata/graph_empty, ./campus testdata/graph_nobuildings, and .
 Expected: graph_empty: 0 accepted and 0 rejected, both buildings show (no connections), 0 connections, BFS from Alpha reaches 1 of 2. graph_nobuildings: the connection is rejected as an unknown building, and options 3, 4, and 5 say no buildings are loaded with totals 0. missing: an error naming connections.txt and the same empty-graph messages, with no crash.
 Actual: graph_empty matched. graph_nobuildings: Warning: connections.txt line 1: unknown building Library, 0 accepted, 1 rejected, then "No buildings are loaded." for all three options, with totals 0. missing: Error: cannot open file connections.txt and the same empty messages. The program exited cleanly each time.
 Result: Pass
+
+Anugrah Lama - Department Tree Milestone 1
+
+Test: Load supplied departments
+Input: Run ./campus.exe with the default data folder
+Expected: departments.txt: 7 accepted, 0 rejected
+Actual: departments.txt: 7 accepted, 0 rejected
+Result: PASS
+
+Test: Display department hierarchy
+Input: Menu option 8
+Expected: Seven departments with correct parent-child relationships
+and four-space indentation per level
+Actual: Hierarchy matched the expected structure
+Result: PASS
+
+Test: Case-insensitive department search
+Input: Menu option 7, then computer science
+Expected: Name Computer Science, parent College of Engineering,
+child count 0, depth 2
+Actual: All details matched
+Result: PASS
+
+Test: Preorder traversal
+Input: Menu option 9
+Expected: University -> College of Engineering -> Computer Science
+-> Electrical Engineering -> College of Science -> Mathematics -> Physics
+Actual: Traversal matched the expected order
+Result: PASS
+
+Test: Add and search a department
+Input: Menu option 6; Software Engineering; Computer Science.
+Then option 7; Software Engineering.
+Expected: Department added under Computer Science with 0 children
+and depth 3
+Actual: All details matched
+Result: PASS
+
+Test: Blank department name
+Input: Menu option 6, then press Enter without a name
+Expected: Blank-name error; return to menu without a parent prompt
+Actual: Matched expected behavior
+Result: PASS
+
+Test: Memory-only additions
+Input: Add Software Engineering, exit, restart, choose option 8
+Expected: Original hierarchy restored; Software Engineering absent
+Actual: Software Engineering was absent after restart
+Result: PASS
+
+Test: Create and search a root in an empty tree
+Input: Run with testdata/department-empty; choose option 6;
+enter University; choose option 7; enter University
+Expected: Root added without a parent prompt; parent None,
+child count 0, depth 0
+Actual: Root search showed None, 0 children, and depth 0
+Result: PASS for search details; confirm no parent prompt
+
+Test: Department file validation
+Input: Run ./campus.exe testdata/department-invalid
+Expected: 2 accepted, 6 rejected; warnings include filename,
+line number, and rejection reason
+Actual: 2 accepted, 6 rejected with the expected warnings
+Result: PASS
+
+Test: Rejected records excluded from hierarchy
+Input: Menu option 8 after loading testdata/department-invalid
+Expected: Only University with Engineering as its child
+Actual: Only University and Engineering appeared
+Result: PASS
+
+Test: Duplicate rejection through the menu
+Input: Option 6; computer science; University
+Expected: Duplicate-name error; no additional department
+Actual: Not yet recorded
+Result: NOT CONFIRMED
+
+Test: Unknown parent through the menu
+Input: Option 6; New Department; Unknown Parent
+Expected: Unknown-parent error; department not added
+Actual: Department absent from hierarchy; error text not recorded
+Result: NOT FULLY CONFIRMED
+
+Test: Missing department file
+Input: Run ./campus.exe testdata/department-missing
+Expected: Cannot-open-file error; 0 accepted, 0 rejected;
+menu remains usable and option 8 reports an empty tree
+Actual: Not yet recorded
+Result: NOT CONFIRMED
