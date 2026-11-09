@@ -23,7 +23,7 @@ Facility records
 The Facility records in the hash table store the uppercase ID, name, building, and category of each facility. The name and category are stored as they appear on the first line for a facility, even if there are spaces within the name or category. Later lines for the same ID do not overwrite existing records, even if the name is different.
 These checks are performed in order on each line of the input files: number of fields, empty fields, ID format (F followed by 3 digits), unknown building, duplicate ID. Blank lines and lines starting with # are skipped, the # is normal text in comments though. Lines with comment characters at the start of the line are skipped, comments starting with # in the middle of a line are not skipped. All spaces, tabs and carriage returns are trimmed from the start and end of each line, so files with Windows line endings will load correctly.
 An ID search can end in three ways: the program outputs ‘invalid format’ for IDs not of the form Fxxx, ‘not found’ plus the ID in uppercase for valid IDs that are not present in the table, and the record for the ID for valid IDs present in the table.
-Note: This branch does not contain campus graph or department tree (which Sebastian and Anugrah are working on in other branches). In the main function we first load buildings.txt and then facilities.txt. Marked places for other files to load in order: buildings, connections, facilities, departments.
+main loads the four files in order: buildings, connections, facilities, departments. The graph and the department tree are in their own classes.
 
 ----------------------------------------------------------------------
 Design notes: campus graph and BFS
