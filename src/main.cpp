@@ -2,10 +2,10 @@
 // Purpose: Load the data files and run the Milestone 1 menu.
 // Author: Asanga Rimal
 //
-// This branch covers facilities and the ID hash table.
-// Building names are loaded here because a facility has to name an accepted
-// building. Connections and the department tree are Sebastian's and Anugrah's
-// modules, so those menu options are not wired up yet.
+// This file loads buildings, connections, facilities, and departments in that
+// order, then runs the menu. Building names are loaded here because a facility
+// has to name an accepted building. The facility, graph, and department tree
+// work is done in their own classes.
 
 #include <fstream>
 #include <iostream>
@@ -205,8 +205,7 @@ int main(int argc, char* argv[]) {
     DepartmentTree departments;
 
     // Required load order starts with buildings, then connections,
-    // then facilities, then departments. Connections and departments
-    // are loaded by the other modules when those branches are merged.
+    // then facilities, then departments.
     loadBuildings(joinPath(dataDir, "buildings.txt"), buildings);
 
     graph.setBuildings(buildings);

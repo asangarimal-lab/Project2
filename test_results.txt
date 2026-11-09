@@ -54,9 +54,9 @@ Result: Pass
 
 Test 8
 Description: [M1] Bad menu input, then a real option, so a bad line does not trap the program.
-Input: on ./campus data, menu lines abc, 99, 3, 6, 0.
-Expected: abc and 99 print an invalid-choice error and return to the menu. 3 and 6 print that those modules are not on this branch. 0 exits.
-Actual: Invalid menu choice for abc and for 99. Option 3 printed that the campus graph module is not available yet. Option 6 printed that the department tree module is not available yet. The program then exited on 0.
+Input: on ./campus data, menu lines abc, 99, a blank line, 3, 0.
+Expected: abc, 99, and the blank line each print an invalid-choice error and return to the menu. 3 shows the campus graph. 0 exits.
+Actual: Invalid menu choice for abc, for 99, and for the blank line. Option 3 printed the campus graph with all 7 buildings. The program then exited on 0.
 Result: Pass
 
 Test 9
