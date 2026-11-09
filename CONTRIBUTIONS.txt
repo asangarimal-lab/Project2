@@ -10,8 +10,13 @@ accepted building names.
 Test data: testdata/collision and testdata/bad.
 
 Sebastian
-Modules: Campus graph and BFS. Not on this branch yet.
-Shared:
+Modules: CampusGraph.
+That covers the adjacency list graph, loading and checking connections.txt,
+graph display, counts and degrees, and BFS reachability.
+Shared: connecting the graph to main.cpp (loading connections and menu
+options 3, 4, and 5) and adding CampusGraph.cpp to the Makefile.
+Test data: testdata/graph_bad, testdata/graph_multi, testdata/graph_empty,
+and testdata/graph_nobuildings. Tests 9 to 15 in test_results.txt.
 
 Anugrah
 Modules: Department tree. Not on this branch yet.
