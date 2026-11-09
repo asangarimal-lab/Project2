@@ -2,121 +2,51 @@ Design notes: facility database and ID hash table
 Asanga Rimal
 
 Hash function
-Every facility ID is trimmed and changed to uppercase before it is checked,
-hashed, stored, or compared. A typed id like f004 becomes F004 first.
-The table does not call a library hash.
-
-Capacity is the named constant INITIAL_CAPACITY in HashTable.h. It is 11.
-That number is the bucket count, not a limit on how many facilities we can store.
-
+Before checking, hashing, storing, and/or comparing any facility ID, it is first trimmed and converted to uppercase.
+The hash table does not call a library hash function.
+The value of the constant INITIAL_CAPACITY in HashTable.h is 11. This value is the number of buckets in the hash table, not the maximum number of facilities that can be stored in the hash table.
 For an uppercase key:
-
     hash = 0
     for each character c in the key:
         hash = (hash * 31 + ASCII value of c) mod capacity
+The result of the hash function on the upper-case key is what remains, and this will be used as the index for the hash table. Because of the small odd multiplier of 31 used in the hash function, keys of the same length ending with different characters are likely to fall into different buckets rather than being mapped to the same bucket.
+In the sample file there is one collision. F009 and F010 both map to bucket 0. The longer chain in testdata/collision is F001, F013, and F025 which all map to bucket 3. Thus there are three elements in bucket 3.
 
-The index is that remainder. 31 is a small odd multiplier, so IDs that only
-differ in the last digit do not all fall into one bucket. The remainder is
-what keeps the index inside 0 .. capacity-1.
-
-With this function, F009 and F010 both land in bucket 0, so the sample file
-produces one collision. F001, F013, and F025 all land in bucket 3. Those three
-are in testdata/collision so we can show a longer chain.
-
-Collision strategy
-Separate chaining. Each bucket is the head of a linked list of nodes, and
-each node holds one facility. I used chaining because the project does not
-want a fixed maximum number of facilities. A chain can grow. Open addressing
-would eventually fill the array and force us to reject a good record.
-We do not resize. A full table cannot happen with this design, so there is
-no "table full" warning.
-
-New nodes are inserted at the front of the chain. That only affects the
-list inside the bucket. The screen list follows facilities.txt, from a
-vector that we push onto when a record is accepted. ID search does not walk
-that vector. It hashes the ID and walks that one chain.
+Collision strat
+Separate chaining is the collision resolution method used in this program. Each bucket in the hash table is the head of a linked list. Each node in the list stores a Facility record. Since there is no limit on the number of facilities in the project, open addressing would eventually fill up the table with valid records and reject them. Also, the table is never resized, so there is no “table full” message.
+New facility records are placed at the front of each bucket, so that facilities are displayed in the order in which they were accepted from facilities.txt. This is because each accepted facility is also placed at the end of a vector of facilities, so the order of the screen list is the same as the order in which the program accepted the records. A search for a facility by ID first hashes the ID and then searches the list of records in the bucket to which the ID hashes.
 
 What counts as a collision
-One collision means one accepted insert into a bucket that already had at
-least one node. Stepping through the chain does not add more to the count.
-If the ID is already in the table, insert returns false before the count
-changes. So a later f001, after F001 was stored, is a rejected duplicate
-and the collision total stays the same. Rejected lines (bad format, unknown
-building, and so on) never reach insert.
+A collision occurs when a record is inserted into a bucket that already contains one or more records. Walking the chain to look for a record does not increase the collision count. If the record being inserted is already in the table, the insert function returns false before the count increases, so a duplicate f001 submitted after F001 would not increase the collision count. Rejected lines are not even inserted into the table, so they do not increase the collision count.
 
 Facility records
-Facility stores the uppercase ID, the facility name, the building, and the
-category. The building saved on the record is the spelling from buildings.txt,
-even if facilities.txt used different capitalization. The facility name and
-the category keep the spelling from the accepted line, including internal
-spaces. A later line with the same ID does not replace the first record,
-even when the names differ.
-
-Load checks, in this order: number of fields, empty fields, ID format
-(F and exactly three digits), unknown building, duplicate ID. Blank lines
-and comment lines are skipped. A comment is a line whose first non-space
-character is #. A # later in the line, as in Room #5, is normal text.
-Trim removes spaces, tabs, and the carriage return, so a Windows file loads.
-
-ID search has three results. An ID that is not F plus three digits is an
-invalid format. A valid ID that misses the table is not found, and the
-message shows the uppercase ID. A hit prints the stored record.
-
-Other modules
-Sebastian is adding the campus graph. Anugrah is adding the department tree.
-This branch does not implement those. main loads buildings.txt, then
-facilities.txt, and leaves marked spots for the other two files so the
-load order can stay buildings, connections, facilities, departments.
+The Facility records in the hash table store the uppercase ID, name, building, and category of each facility. The name and category are stored as they appear on the first line for a facility, even if there are spaces within the name or category. Later lines for the same ID do not overwrite existing records, even if the name is different.
+These checks are performed in order on each line of the input files: number of fields, empty fields, ID format (F followed by 3 digits), unknown building, duplicate ID. Blank lines and lines starting with # are skipped, the # is normal text in comments though. Lines with comment characters at the start of the line are skipped, comments starting with # in the middle of a line are not skipped. All spaces, tabs and carriage returns are trimmed from the start and end of each line, so files with Windows line endings will load correctly.
+An ID search can end in three ways: the program outputs ‘invalid format’ for IDs not of the form Fxxx, ‘not found’ plus the ID in uppercase for valid IDs that are not present in the table, and the record for the ID for valid IDs present in the table.
+Note: This branch does not contain campus graph or department tree (which Sebastian and Anugrah are working on in other branches). In the main function we first load buildings.txt and then facilities.txt. Marked places for other files to load in order: buildings, connections, facilities, departments.
 
 ----------------------------------------------------------------------
 Design notes: campus graph and BFS
 Sebastian
 
 Graph representation
-The graph is an adjacency list inside the CampusGraph class. There is a vector
-of building names and a vector of vectors of ints. adjList[i] holds the
-indexes of the buildings that touch building i. I chose an adjacency list
-because it grows with the data, so there is no fixed size and no wasted space
-for a campus with few walkways. A matrix would need n by n cells even when
-most are empty. Checking whether two buildings are already connected means
-looking through one short list, which is fine for a campus.
-
-Buildings stay in the order of buildings.txt. Neighbors stay in the order
-the connections were accepted. I never sort them, because sorting could
-change the BFS order.
+The graph is stored using an adjacency list in CampusGraph. It uses a vector of strings to keep track of the buildings and a vector of vectors of integers to store the connections. Each building has a list of indices that point to the buildings it can reach. As more connections are added the list grows dynamically—there is no size. This works well for campuses that have paths but relatively few buildings. Using a matrix would require n*n spaces. Most of them would be empty. With the adjacency list checking if two buildings are connected is fast because we only search through lists. This is fine, for a campus environment.
+The buildings are kept in the order as they appear in buildings.txt. The neighbors stay in the order they were added. I do not sort them because sorting could change the order of nodes during a BFS traversal.
 
 Loading connections
-main loads buildings.txt first and gives the accepted names to the graph with
-setBuildings. Then loadConnections reads connections.txt with getline. Blank
-lines and lines whose first non-space character is # are skipped. Checks, in
-this order: number of fields (must be 2), empty fields, unknown building on
-either side, a building connected to itself, and a duplicate. Building names
-are matched ignoring case and with outer whitespace trimmed, so the graph
-always shows the spelling from buildings.txt. A reversed duplicate (B|A after
-A|B) is caught because the duplicate check looks for the edge from either end.
-Every rejected line prints the file name, line number, and reason, and then
-loading continues. A missing file prints an error and the graph stays empty.
-
+The main program loads the buildings.txt file first and passes the names of the buildings to the graph via setBuildings(). After that, the main program loads the connections file by line using getline() in the method loadConnections().Lines that are empty or start with # are ignored. Each line has 2 fields where some of them can be empty, there are and can be unknown creations on the edge, some building can be connected to itself and there can be some duplicates.
+The connections file can contain lines with 2 fields (some of them empty). Some buildings on the edge are unknown added to that some buildings can be connected to themselves, In addition there can be duplicates in the file, building names are compared case-insensitively. Duplicates like B|A are  detected, because the duplicate check considers edges from both ends. Lines that are rejected are listed with the name of the file, line number and reason for rejection. The program continues to load the connections file. If the file is not found, an error message is printed and an empty graph is produced.
 An accepted connection is added to both buildings, but the connection count
-goes up only once. Total connections is that count, so it is never doubled.
-The degree of a building is the size of its neighbor list.
+goes up only once.
+
+As normal the most import thing is the total connections
+Degree of a building is the size of its neighbor list.
 
 Display
-View graph prints each building and its neighbors, or (no connections) when
-the list is empty. Counts and degrees prints total buildings, total
-connections, and the degree of every building. If there are no buildings,
-both print a clear message and the totals show 0.
+View graph: lists the buildings and their neighbors, or (no connections) if the list is not filled. Counts and degrees: lists the total number of buildings, the total number of connections and the degree of each building. If there are no buildings then both functions will print out a message stating so and the totals will be 0.
 
 BFS reachability
-The menu asks for a starting building. A blank name is an error in main. An
-unknown name prints an error and returns to the menu. BFS uses a std::queue
-and a vector<bool> visited. I mark a building as visited when I put it in the
-queue, not when I take it out, so no building is queued twice. A second vector
-keeps the distance in connections, which is the distance of the building it
-was reached from plus one. Buildings print in the order they leave the queue,
-each with its distance, and then "Reachable: X of Y buildings". The start is
-at distance 0 and counts as reachable, so an isolated building reaches only
-itself. Buildings in other connected components are never reached.
+For the menu option BFS reachability, the starting building is requested. If the building name is unknown, an error message is printed and the menu is displayed again. The BFS is implemented using a std::queue and a vector<bool> visited. The building is marked as visited when it is put into the queue, not when it is taken out of the queue. So, a building is never put into the queue twice. Another vector is used to store the distance in connections from the starting building. This is the distance of the building from which the current building was reached, plus one. The buildings are printed in the order that they are removed from the queue, each with its distance from the starting building. Finally, the program prints the number of buildings that are reachable from the starting building, in the form “Reachable: X of Y buildings”. The starting building is at distance 0 from itself and is thus always reachable from itself. Buildings in other connected components are never reached.
 
 Same graph for later features
 Display, counts, and BFS all use the same adjList. The Final shortest path and

@@ -2,15 +2,12 @@ Smart Campus Navigation and Facility Analytics System
 Project 2, Milestone 1
 
 Purpose
-This program loads campus text files and lets a user look up facilities by ID
-and explore how campus buildings connect.
+This program can read in campus text files and look up facilities by ID, as well as show how the various campus buildings are connected.
 The ID lookup uses a custom hash table with separate chaining. Building names
 are loaded first so a facility can only refer to an accepted building.
-The campus is an undirected graph kept as an adjacency list. The user can view
-it, see counts and degrees, and run a BFS to find reachable buildings.
+The campus is represented as an undirected graph, stored as an adjacency list. The user can view the graph, get counts and degrees of vertices, and perform a BFS to find out which other buildings are reachable from a given building.
 
-The department tree is not in this branch yet. Menu options 6 through 9 print
-a short message and return to the menu.
+The department tree is not yet included in this branch. Options 6 through 9 on the menu print a short message and return to the menu.
 
 Directory layout
 include/     header files
@@ -43,9 +40,9 @@ The data directory is optional. If you leave it off, the program reads data/.
     ./campus testdata/graph_bad
 
 Menu
-1 and 2 are the facility options. 3, 4, and 5 are the graph options:
-view the graph, show counts and degrees, and find reachable buildings (BFS).
-0 exits.
-Type a full line at every prompt. Names and IDs can include spaces.
-A blank line, a word, or a number that is not on the menu prints an error
-and shows the menu again.
+1 and 2 are the facility options. 3, 4 And 5 are the graph options:
+view the graph, show counts and degrees and find buildings (BFS).
+0 Exits.
+Type a line at every prompt. Names and IDs can include spaces.
+A blank line, a word or a number that is not, on the menu prints an error
+Shows the menu again.
